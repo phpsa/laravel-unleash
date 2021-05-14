@@ -2,9 +2,10 @@
 
 namespace JWebb\Unleash\Providers;
 
-use JWebb\Unleash\Unleash;
 use GuzzleHttp\Client;
+use JWebb\Unleash\Unleash;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Console\Scheduling\Event;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
 class ServiceProvider extends IlluminateServiceProvider
@@ -19,8 +20,8 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->app->singleton('unleash', function ($app) {
             $client = new Client([
                 'base_uri' => config('unleash.url'),
-                'headers' => [
-                    'UNLEASH-APPNAME' => config('unleash.application_name'),
+                'headers'  => [
+                    'UNLEASH-APPNAME'    => config('unleash.application_name'),
                     'UNLEASH-INSTANCEID' => config('unleash.instance_id'),
                 ]
             ]);
@@ -54,6 +55,8 @@ class ServiceProvider extends IlluminateServiceProvider
         Blade::if('featureDisabled', function (string $feature) {
             return app(Unleash::class)->isFeatureDisabled($feature);
         });
+
+        $this->schedulingMacros();
     }
 
     /**
@@ -64,5 +67,37 @@ class ServiceProvider extends IlluminateServiceProvider
     private function getConfigPath(): string
     {
         return __DIR__ . '/../../config/unleash.php';
+    }
+
+
+    protected function schedulingMacros()
+    {
+        if (! Event::hasMacro('ifFeatureDisabled')) {
+            Event::macro('ifFeatureDisabled', function ($feature) {
+                /*
+                 * only if the feature is disabled
+                 *
+                 * @var \Illuminate\Console\Scheduling\Event $this
+                 */
+
+                return $this->when(function () use ($feature) {
+                    return ! app(Unleash::class)->feature()->isEnabled($feature);
+                });
+            });
+        }
+
+        if (! Event::hasMacro('ifFeatureEnabled')) {
+            Event::macro('ifFeatureEnabled', function ($feature) {
+                /*
+                 * only if the feature is enabled
+                 *
+                 * @var \Illuminate\Console\Scheduling\Event $this
+                 */
+
+                return $this->when(function () use ($feature) {
+                    return app(Unleash::class)->feature()->isEnabled($feature);
+                });
+            });
+        }
     }
 }

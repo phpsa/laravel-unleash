@@ -1,29 +1,43 @@
 {
-    "name": "j-webb/laravel-unleash",
-    "description": "An Unleash client for Laravel",
-    "type": "library",
-    "require": {
-        "guzzlehttp/guzzle": "^7.0.1",
-        "illuminate/support": "^6|^7|^8",
-        "illuminate/http": "^6|^7|^8"
-    },
-    "autoload": {
-        "psr-4": {
-            "JWebb\\Unleash\\": "src/"
-        }
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Jonathan Webb",
-            "email": "jonwebb247@gmail.com"
-        }
-    ],
-    "extra": {
-        "laravel": {
-            "providers": [
-                "JWebb\\Unleash\\Providers\\ServiceProvider"
-            ]
-        }
+  "name": "j-webb/laravel-unleash",
+  "description": "An Unleash client for Laravel",
+  "type": "library",
+  "require": {
+    "guzzlehttp/guzzle": "^7.0.1",
+    "illuminate/support": "^6|^7|^8",
+    "illuminate/http": "^6|^7|^8"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^6.0|^5.0|^4.0",
+    "phpunit/phpunit": "^9.0|^8.3",
+    "mockery/mockery": "^1.2.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "JWebb\\Unleash\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "JWebb\\Unleash\\Tests\\": "tests"
+    }
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jonathan Webb",
+      "email": "jonwebb247@gmail.com"
+    }
+  ],
+  "extra": {
+    "laravel": {
+      "providers": [
+        "JWebb\\Unleash\\Providers\\ServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+  }
 }

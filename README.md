@@ -5,6 +5,7 @@ A simple Unleash client for Laravel. It is compatible with the [Unlesah-hosted.c
 ## Getting started
 
 ### 1. Install the Laravel Unleash via Composer
+
 ```bash
 composer require j-webb/laravel-unleash
 ```
@@ -12,6 +13,7 @@ composer require j-webb/laravel-unleash
 ### 2. Configure
 
 #### Create local configuration (optional)
+
 ```bash
 php artisan vendor:publish --provider="JWebb\Unleash\Providers\ServiceProvider"
 ```
@@ -24,27 +26,32 @@ UNLEASH_URL=https://app.unleash-hosted.com/
 ```
 
 #### Optional .env values
+
 ```dotenv
 # Enable or disable the Laravel Unleash client. If disabled, all feature checks will return false
 UNLEASH_ENABLED=true
 
 # Currently unused, but is sent as a header alongside the Unleash API requests
-UNLEASH_APPLICATION_NAME=Laravel 
+UNLEASH_APPLICATION_NAME=Laravel
 
 # Currently unused, but is sent as a header alongside the Unleash API requests
-UNLEASH_INSTANCE_ID=production 
+UNLEASH_INSTANCE_ID=production
 ```
 
 #### Setting up caching/polling
+
 The configuration contains values to enable/disable cache, as well as set a cache TTL. You can mimic the recommended Unleash polling rate by setting a TTL of 15 seconds.
 
 #### Setting up Activation Strategies
+
 Laravel Unleash comes with a selection of activation strategies out of the box. You can enable/disable these by commenting out the required line inside the configuration.
 
 You may also add custom strategy classes by adding them on a new line after the existing strategies.
 
 #### Setting up the Middleware
+
 The module comes bundled with middleware for you to perform a feature check on routes and/or controllers.
+
 ```php
 #/app/Http/Kernal.php
 protected $routeMiddleware = [
@@ -56,6 +63,7 @@ protected $routeMiddleware = [
 
 Once added to your `Kernal.php` file, you can use this in any area where middleware is applicable.
 As an example, you could use this in a controller.
+
 ```php
 
 public function __construct()
@@ -64,11 +72,13 @@ public function __construct()
 }
 
 ```
+
 See the [Laravel Docs](https://laravel.com/docs/middleware) for more information.
 
 ## Usage
 
 Checking individual features
+
 ```php
 if (Unleash::feature()->isActive('your_feature')) {
     // Your feature is enabled and is applicable (strategy activated)
@@ -84,6 +94,7 @@ if (Unleash::feature()->isEnabled('your_feature')) {
 ```
 
 Using array of features
+
 ```php
 // List of all features, enabled or disabled
 $allFeatures = Unleash::feature()->all();
@@ -95,11 +106,12 @@ $enabledFeatures = Unleash::feature()->getEnabled();
 $activeFeatures = Unleash::feature()->getActive();
 
 // List of all active features, but may not be enabled
-$activeFeatures = Unleash::feature()->getActive(false); 
+$activeFeatures = Unleash::feature()->getActive(false);
 ```
 
 Using middleware on a controller
-``` php
+
+```php
 class ExampleController extends Controller
 {
     public function __construct()
@@ -111,9 +123,17 @@ class ExampleController extends Controller
 ```
 
 Using middleware on a route
-``` php
+
+```php
 Route::get('/', function () {
     //
 })->middleware('feature:your_feature');
 ```
 
+Setting your scheduler
+
+```php
+
+$schedule->ifFeatureEnabled('my-feature')->job('xxx');
+$schedule->ifFeatureDisabled('my-feature')->job('xxx');
+```
